@@ -1178,12 +1178,6 @@ func sendDiscordNotifications() error {
 							}
 							log.WarnWithFields(map[string]interface{}{"errResp.Body": trimmedBody, "webhook.Url": webhook.Url, "status": resp.StatusCode}, "error pushing discord webhook")
 						}
-
-						if resp.StatusCode == http.StatusTooManyRequests {
-							log.Warnf("could not push to discord webhook due to rate limit. %v url: %v", errResp.Body, webhook.Url)
-						} else {
-							log.Error(nil, "error pushing discord webhook", 0, map[string]interface{}{"errResp.Body": errResp.Body, "webhook.Url": webhook.Url})
-						}
 					}
 
 					_, err = db.FrontendWriterDB.Exec(`UPDATE users_webhooks SET request = $2, response = $3 WHERE id = $1;`, webhook.ID, reqs[i].Content.DiscordRequest, errResp)
